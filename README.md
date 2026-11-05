@@ -2,6 +2,10 @@
 
 Pineapple's landing page, built with Next.js and a Three.js particle animation.
 
+## Live link
+
+https://pineapple-website-vum8.onrender.com/
+
 ## Local development
 
 ```bash
