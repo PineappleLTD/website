@@ -48,6 +48,31 @@ const PROJECTS: Project[] = [
       ],
     },
   },
+  {
+    name: "blueguessr",
+    tagline: "GeoGuessr for the University of Michigan campus.",
+    details: {
+      href: "https://github.com/PineappleLTD/blueguessr",
+      sections: [
+        {
+          title: "Play",
+          body: "You see a street-level photo from somewhere on campus and drop a pin where you think it was taken. A game is five rounds, and a pin within 10 metres is a bullseye.",
+        },
+        {
+          title: "Versus",
+          body: "Make a room, share the code and take on up to five friends. Every round, each player loses health by how far their score falls behind the best one.",
+        },
+        {
+          title: "Leaderboard",
+          body: "Solo games count toward an all-time and a weekly leaderboard.",
+        },
+        {
+          title: "Photos",
+          body: "Photos come from Mapillary and Wikimedia Commons under Creative Commons licenses, and each one credits its photographer after you guess. Players can add their own photos from their phones, which show up once they're approved.",
+        },
+      ],
+    },
+  },
 ];
 
 export default function Sidebar({ visible }: { visible: boolean }) {
