@@ -28,14 +28,17 @@ preview the production export, serve `out/` with a static HTTP server.
 ## Applications (Cloudflare only)
 
 The "apply" tab posts to `/api/apply`, a small Cloudflare Worker
-(`worker/index.ts`) that stores one row per email in the D1 database
-`website-applications` (table `applications`, created by `migrations/`). The
-Render copy has no Worker, so the form only works on https://pineapplehacks.com/.
+(`worker/index.ts`). It stores one row per email in the `applications` table
+of a Durable Object's SQLite storage, which Cloudflare creates when the Worker
+deploys. To read the applications, open the `website` Worker's `Applications`
+Durable Object in the Cloudflare dashboard. The Render copy has no Worker, so
+the form only works on https://pineapplehacks.com/.
+
+To run the site with the Worker locally:
 
 ```bash
-npx wrangler d1 migrations apply DB --local   # set up the local database
-npx wrangler dev                              # serve out/ plus the Worker (run npm run build first)
-npx wrangler d1 execute DB --remote --command "SELECT * FROM applications ORDER BY created_at"
+npm run build
+npx wrangler dev   # local data goes to .wrangler/state
 ```
 
 ## Render hosting

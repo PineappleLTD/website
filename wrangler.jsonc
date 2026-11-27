@@ -1,7 +1,9 @@
 {
   // `next build` writes the static site to ./out (output: "export"), and
   // Cloudflare serves those files directly. Only /api/* runs the Worker in
-  // worker/index.ts, which stores applications in D1.
+  // worker/index.ts, which keeps applications in a Durable Object's SQLite
+  // storage. The `migrations` entry makes deploy create it; never edit or
+  // remove a migration that has shipped, only add new ones.
   "name": "website",
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-04",
@@ -11,20 +13,8 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "website-applications",
-      "database_id": "00000000-0000-0000-0000-000000000000",
-      "migrations_dir": "migrations"
-    }
-  ],
-  // 5 applications per minute from one IP address.
-  "ratelimits": [
-    {
-      "name": "APPLY_LIMITER",
-      "namespace_id": "1001",
-      "simple": { "limit": 5, "period": 60 }
-    }
-  ]
+  "durable_objects": {
+    "bindings": [{ "name": "APPLICATIONS", "class_name": "Applications" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Applications"] }]
 }
