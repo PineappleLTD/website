@@ -18,7 +18,7 @@ There is no test suite. To preview a production build, serve `out/` with any sta
 ## Stack notes
 
 - Next.js 16 (App Router) + React 19 + Three.js + Tailwind v4. Next 16 APIs differ from older versions — check `node_modules/next/dist/docs/` before using framework APIs (see AGENTS.md).
-- `next.config.ts` sets `output: "export"`: the site is fully static. Nothing that needs a server (route handlers, server actions, dynamic rendering, `next/image` optimization without a loader) will work.
+- `next.config.ts` sets `output: "export"`: the Next app is fully static. Nothing that needs a server (route handlers, server actions, dynamic rendering, `next/image` optimization without a loader) will work. The one server-side piece is the Cloudflare Worker in `worker/index.ts` (see Deployment).
 - Tailwind is wired through a Turbopack loader rule in `next.config.ts` (`@tailwindcss/turbopack`), not a PostCSS config.
 - Global CSS disables text selection on everything except inputs/textareas/contenteditable.
 
@@ -39,4 +39,4 @@ The site is a single landing page:
 Static `out/` is deployed two ways (live at https://pineapplehacks.com/):
 
 - **Render Static Site** from `main`: build `npm ci --include=dev && npm run build`, publish dir `out`, `NODE_VERSION=22`, `SKIP_INSTALL_DEPS=true`.
-- **Cloudflare** via `wrangler.jsonc`: serves `./out` as static assets with `404-page` not-found handling (no Worker code).
+- **Cloudflare** via `wrangler.jsonc` (serves pineapplehacks.com, deployed on push to `main`): serves `./out` as static assets with `404-page` not-found handling. Only `/api/*` runs the Worker in `worker/index.ts`: `POST /api/apply` stores one application per email in the SQLite storage of the `Applications` Durable Object, which deploy creates from the `migrations` entry in `wrangler.jsonc` (never edit a shipped migration, only add new ones), and allows 5 tries per IP per minute. Local run: `npm run build && npx wrangler dev`. The Render copy has no Worker, so the apply form fails there.

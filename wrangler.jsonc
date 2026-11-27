@@ -1,10 +1,20 @@
 {
-  // Static site: `next build` writes plain files to ./out (output: "export"),
-  // and Cloudflare serves them directly. No server code / OpenNext needed.
+  // `next build` writes the static site to ./out (output: "export"), and
+  // Cloudflare serves those files directly. Only /api/* runs the Worker in
+  // worker/index.ts, which keeps applications in a Durable Object's SQLite
+  // storage. The `migrations` entry makes deploy create it; never edit or
+  // remove a migration that has shipped, only add new ones.
   "name": "website",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-11-04",
   "assets": {
     "directory": "./out",
-    "not_found_handling": "404-page"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "APPLICATIONS", "class_name": "Applications" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Applications"] }]
 }
