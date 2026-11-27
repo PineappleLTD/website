@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Apply from "./Apply";
 import Waitlist from "./Waitlist";
 
-type Tab = "projects" | "contact";
+type Tab = "projects" | "contact" | "apply";
+
+const TABS: Tab[] = ["projects", "contact", "apply"];
+
+const CONTACT_EMAIL = "pineapple@umich.edu";
 
 type Project = {
   name: string;
@@ -90,7 +95,7 @@ export default function Sidebar({ visible }: { visible: boolean }) {
           visible ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        {(["projects", "contact"] as const).map((t) => (
+        {TABS.map((t) => (
           <button
             key={t}
             type="button"
@@ -200,24 +205,22 @@ export default function Sidebar({ visible }: { visible: boolean }) {
         )}
 
         {tab === "contact" && (
-          <ul className="flex flex-col gap-3 font-mono text-sm">
-            {[
-              "evanduan@umich.edu",
-              "micwu@umich.edu",
-              "mikeahn@umich.edu",
-              "samuelx@umich.edu",
-              "tanjames@umich.edu",
-            ].map((email) => (
-              <li key={email}>
-                <a
-                  href={`mailto:${email}`}
-                  className="text-white/50 transition-colors hover:text-white/90"
-                >
-                  {email}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="self-start font-mono text-sm text-white/50 transition-colors hover:text-white/90"
+          >
+            {CONTACT_EMAIL}
+          </a>
+        )}
+
+        {tab === "apply" && (
+          <div className="flex flex-col gap-8">
+            <p className="text-sm leading-relaxed text-white/50">
+              Pineapple is not recruiting right now. Keep watching this website
+              for when winter 2027 applications come out.
+            </p>
+            <Apply />
+          </div>
         )}
       </aside>
     </>
