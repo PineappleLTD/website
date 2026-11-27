@@ -64,7 +64,9 @@ export class Applications {
 const json = (status: number, body: object) =>
   Response.json(body, { status, headers: { "cache-control": "no-store" } });
 
-// POST /api/apply {"email": "..."}: saves one application per email.
+// POST /api/apply {"email": "..."}: saves one application per email. A new
+// email and a repeat get the same 200, so nobody can use this to find out
+// whether someone else has applied.
 async function apply(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") {
     return json(405, { error: "Use POST." });
@@ -100,9 +102,8 @@ async function apply(request: Request, env: Env): Promise<Response> {
   });
   switch (res.status) {
     case 201:
-      return json(201, { ok: true });
     case 409:
-      return json(409, { error: "You've already applied with this email." });
+      return json(200, { ok: true });
     case 429:
       return json(429, { error: "Too many tries. Please wait a minute." });
     default:

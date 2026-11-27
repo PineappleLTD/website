@@ -3,8 +3,23 @@
 import { useState, type FormEvent } from "react";
 
 // Posts to the Worker in worker/index.ts, which keeps one application per
-// email in D1. It only exists on the Cloudflare deploy (pineapplehacks.com).
-type Status = "idle" | "sending" | "done";
+// email. It only exists on the Cloudflare deploy (pineapplehacks.com).
+type Status = "idle" | "sending" | "done" | "again";
+
+// The server answers a repeat the same way as a new email (so it can't reveal
+// who applied); this browser remembers what it sent to say "Thank you again!".
+const SENT_KEY = "pineapple-applied";
+
+function sentBefore(email: string): boolean {
+  try {
+    const sent: string[] = JSON.parse(localStorage.getItem(SENT_KEY) ?? "[]");
+    if (sent.includes(email)) return true;
+    localStorage.setItem(SENT_KEY, JSON.stringify([...sent, email]));
+  } catch {
+    // Storage blocked or unreadable: treat it as a first application.
+  }
+  return false;
+}
 
 export default function Apply() {
   const [email, setEmail] = useState("");
@@ -22,7 +37,7 @@ export default function Apply() {
         body: JSON.stringify({ email: email.trim() }),
       });
       if (res.ok) {
-        setStatus("done");
+        setStatus(sentBefore(email.trim().toLowerCase()) ? "again" : "done");
         return;
       }
       const body = (await res.json().catch(() => null)) as {
@@ -35,10 +50,12 @@ export default function Apply() {
     setStatus("idle");
   };
 
-  if (status === "done") {
+  if (status === "done" || status === "again") {
     return (
       <p role="status" className="text-sm text-white/70">
-        Thanks! We&apos;ll email you when applications open.
+        {status === "again"
+          ? "Thank you again!"
+          : "Thanks! We'll email you when applications open."}
       </p>
     );
   }
