@@ -10,7 +10,7 @@ type Project = {
   tagline: string;
   // Projects without details are listed but can't be opened.
   details?: {
-    href?: string;
+    link?: { href: string; label: string };
     sections?: { title: string; body: string }[];
     waitlist?: boolean;
   };
@@ -27,7 +27,7 @@ const PROJECTS: Project[] = [
     tagline:
       "A place for comparing prices, selling things and finding coupons.",
     details: {
-      href: "https://github.com/PineappleLTD/vendr",
+      link: { href: "https://github.com/PineappleLTD/vendr", label: "GitHub" },
       sections: [
         {
           title: "Shop",
@@ -50,27 +50,9 @@ const PROJECTS: Project[] = [
   },
   {
     name: "blueguessr",
-    tagline: "GeoGuessr for the University of Michigan campus.",
+    tagline: "GeoGuessr for the UMich campus",
     details: {
-      href: "https://github.com/PineappleLTD/blueguessr",
-      sections: [
-        {
-          title: "Play",
-          body: "You see a street-level photo from somewhere on campus and drop a pin where you think it was taken. A game is five rounds, and a pin within 10 metres is a bullseye.",
-        },
-        {
-          title: "Versus",
-          body: "Make a room, share the code and take on up to five friends. Every round, each player loses health by how far their score falls behind the best one.",
-        },
-        {
-          title: "Leaderboard",
-          body: "Solo games count toward an all-time and a weekly leaderboard.",
-        },
-        {
-          title: "Photos",
-          body: "Photos come from Mapillary and Wikimedia Commons under Creative Commons licenses, and each one credits its photographer after you guess. Players can add their own photos from their phones, which show up once they're approved.",
-        },
-      ],
+      link: { href: "https://blueguessr.vercel.app", label: "Website" },
     },
   },
 ];
@@ -204,14 +186,14 @@ export default function Sidebar({ visible }: { visible: boolean }) {
               </dl>
             )}
 
-            {project.details.href && (
+            {project.details.link && (
               <a
-                href={project.details.href}
+                href={project.details.link.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-12 self-start text-sm text-white/70 transition-colors hover:text-white"
               >
-                GitHub <span aria-hidden>↗</span>
+                {project.details.link.label} <span aria-hidden>↗</span>
               </a>
             )}
           </div>
